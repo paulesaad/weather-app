@@ -119,8 +119,8 @@ img {
     width: 1000px;
 
     .quick_weather {
-        width: 700px;
-        margin-top: 2rem;
+        width: 1000px;
+        margin: 2rem;
 
         img {
             width: 2rem;
@@ -140,9 +140,15 @@ img {
             transform: translateY(-.6rem);
         }
 
-        .current{
+        .current {
             margin: auto;
-            width: 80%;
+            width: 60%;
+            border: 1px solid yellow;
+
+            span {
+                display: block;
+            }
+
         }
 
     }
@@ -231,7 +237,7 @@ img {
             img {
                 display: block;
                 margin: auto;
-                width: 70%;
+                width: 50%;
             }
 
             span {
@@ -240,9 +246,10 @@ img {
                 margin: auto;
                 &:first-of-type{
                     font-weight: 600;
+                    padding-bottom: .5rem;
                 }
                 &:nth-of-type(2){
-                    transform: translateY(-50%);
+                    padding-top: .5rem;
                     font-size: 0.8rem;
                 }
             }
