@@ -4,39 +4,44 @@ require("babel/register")
 
 var Promise = require('es6-promise').Promise
 var $ = require('jquery')
-var key = 'b368ef0dc47a771e46425a036ab6def1'
+var backbone = require('backbone')
+
+function qs(selector) {
+    return document.querySelector(selector)
+}
+
+function qsAll(selector) {
+    return document.querySelectorAll(selector)
+}
+
+//-------------------------------------------------------------------------------------------
+
 
 var GPS = new Promise((res, rej) => {
-    // if gps successful, resolve with coordinates
-    // else reject with error
-    
     navigator.geolocation.getCurrentPosition(
         (gpsData) => res({
             lat: gpsData.coords.latitude,
-            lon: gpsData.coords.longitude
+            lon: gpsData.coords.longitude,
+            address: `your location`
         }), (error) => rej(error.message)
     )
 })
 
-GPS.then((ll) => {
-
-    function qs(selector) {
-        return document.querySelector(selector)
-    }
-
-    function qsAll(selector) {
-        return document.querySelectorAll(selector)
-    }
-
-    var address = `Houston, TX`
+var googGPS = (address) => {   
     var googurl = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}`
-    var y = $.getJSON(googurl).then((r) => {
-        console.log(r)
+    return $.getJSON(googurl).then((r) => {
+        return {
+            lat: r.results[0].geometry.location.lat,
+            lon: r.results[0].geometry.location.lng,
+            formatted_address: r.results[0].formatted_address
+        }
     })
+}
 
 
+var fetchWeatherData_callback = (ll) => {
+    var key = 'b368ef0dc47a771e46425a036ab6def1'
     var url = `https://api.forecast.io/forecast/${key}/${ll.lat},${ll.lon}?callback=?`
-
     var x = $.getJSON(url).then((r) => {
 
         //Topbar Data
@@ -54,21 +59,21 @@ GPS.then((ll) => {
             humidity_current = current_data.humidity * 100,
             wind_current = current_data.windSpeed
 
-        qs(".current").innerHTML += `<span>Summary for the day --> ${summary_current}</span>`
-        qs(".current").innerHTML += `<span>Now --> ${Math.round(temp_current)}\xB0</span>`
-        qs(".current").innerHTML += `<span>Feels Like --> ${Math.round(appTemp_current)}\xB0</span>`
-        qs(".current").innerHTML += `<span>Chance of rain --> ${Math.round(precProb_current)}%</span>`
-        qs(".current").innerHTML += `<span>Wind --> ${wind_current} mph</span>`
-        qs(".current").innerHTML += `<span>Visibility --> ${visibility} mi</span>`
-        qs(".current").innerHTML += `<span>Humidity --> ${humidity_current}%</span>`
+        qs(".current").innerHTML = `<span>Today in ${ll.formatted_address}: --> ${summary_current}</span>
+                                    <span>Now --> ${Math.round(temp_current)}\xB0</span>
+                                    <span>Feels Like --> ${Math.round(appTemp_current)}\xB0</span>
+                                    <span>Chance of rain --> ${Math.round(precProb_current)}%</span>
+                                    <span>Wind --> ${wind_current} mph</span>
+                                    <span>Visibility --> ${visibility} mi</span>
+                                    <span>Humidity --> ${humidity_current}%</span>`
 
 
-        var weather_icon_src_generator = function(dataOnDay) {
-            if (dataOnDay.cloudCover < .3) {
+        var weather_icon_src_generator = function(dayX_data) {
+            if (dayX_data.cloudCover < .3) {
                 return `../../images/sunny.svg`
-            } else if (dataOnDay.cloudCover > .3 && dataOnDay.cloudCover < .5) {
+            } else if (dayX_data.cloudCover > .3 && dayX_data.cloudCover < .5) {
                 return `../../images/partlysunny.svg`
-            } else if (dataOnDay.cloudCover > 0.5 && dataOnDay.precipProbability < 0.5) {
+            } else if (dayX_data.cloudCover > 0.5 && dayX_data.precipProbability < 0.5) {
                 return `../../images/cloudy.svg`
             } else {
                 return `../../images/rainy.svg`
@@ -97,13 +102,14 @@ GPS.then((ll) => {
         var week_summary = r.daily.summary
         qs(".through_the_week p").innerHTML = week_summary
 
-        var weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        var weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         var days = [0, 1, 2, 3, 4, 5, 6, 7]
 
         function getDay_of_week(day) {
             return weekdays[((new Date().getDay() - 1) + day) % 7]
         }
 
+        qs("h5").innerHTML = `${getDay_of_week(0)}'s Forecast:`
 
         days.forEach((day) => {
             var week_data = r.daily.data[day],
@@ -116,14 +122,42 @@ GPS.then((ll) => {
         })
 
         var daysOfWeekEls = qsAll('.dayoftheweek')
+
         for (var i = 0; i < daysOfWeekEls.length; i++) {
-            daysOfWeekEls[i].addEventListener('click', function() {
+
+            daysOfWeekEls[i].addEventListener('click', function(){
+                qs("h5").innerHTML = `${getDay_of_week(parseInt(this.getAttribute('data-day')))}'s Forecast:`
                 displayDayX(parseInt(this.getAttribute('data-day')))
-                    // qs("h5").innerHTML = `${getDay_of_week(parseInt(this.getAttribute('data-day')))}'s Forecast`
-                    // console.log((parseInt(this.getAttribute('data-day'))))
             })
         }
 
     })
+}
 
+
+
+//------------------------------------------------------------------------------------------------
+var WeatherRouter = backbone.Router.extend({
+    routes: {
+        ':location': 'showCityWeather',
+        '*default': 'showLocalWeather'
+    },
+    showCityWeather: (entered_address) => {
+        googGPS(entered_address).then(fetchWeatherData_callback)
+    },
+    showLocalWeather: () => {
+        GPS.then(fetchWeatherData_callback)
+    },
+    initialize: () => {
+        var node = qs('form')
+        node.addEventListener('submit', (e) => {
+            var val = node.querySelector('input').value
+            e.preventDefault()
+            window.location.hash = `${val.replace(' ', '+')}`
+        })
+        backbone.history.start()
+    }
 })
+
+
+var router = new WeatherRouter()
