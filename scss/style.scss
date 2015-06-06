@@ -89,17 +89,20 @@ img {
  * YOUR CODE HERE
  */
 
+$blue : rgb(41, 143, 251);
 
 .topbar {
     margin: auto;
     width: 1000px;
     background-color: #ddd;
     position: relative;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    border: 1px solid #ccc;
+    padding-top: 0.5rem 0 0.5rem 0;
+    border: 2px solid #ccc;
     border-radius: 7px;
 
+    h2 {
+        padding: 0.6rem 0 0 0.7rem;
+    }
 
     div {
         position: absolute;
@@ -136,17 +139,44 @@ img {
 
         form {
             display: inline-block;
-            padding-left: 1rem;
+            margin-left: 1rem;
             transform: translateY(-.6rem);
         }
 
         .current {
             margin: auto;
-            width: 60%;
-            border: 1px solid yellow;
+            width: 40%;
 
-            span {
+            div {
+                overflow: auto;
                 display: block;
+                width: 100%;
+                span{
+                    display: block;
+                    &:first-of-type{
+                        float: left;
+                        &:hover{
+                            + span{
+                            transform: translateX(-5rem);
+                            }
+                        }
+                    }
+                    &:nth-of-type(2){
+                        float: right;
+                        padding-right: 3rem;
+                        transition: .5s ease all;
+                    }
+                }
+
+                &:first-of-type{
+                    span{
+                        padding: 0 0 1.3rem 0;
+
+                        &:first-of-type{
+                            font-size: 1.2rem;
+                        }
+                    }
+                }
             }
 
         }
@@ -162,7 +192,7 @@ img {
     .daily {
         margin: auto;
         width: 300px;
-        border: 1px solid green;
+        border: 1.5px solid #ccc;
         border-radius: 7px;
         margin-bottom: 3rem;
         margin-top: 3rem;
@@ -225,7 +255,7 @@ img {
         div {
             display: inline-block;
             position: relative;
-            border: 1px solid red;
+            border: 1.5px solid #ccc;
             border-radius: 6px;
             width: 12%;
 

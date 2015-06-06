@@ -2,9 +2,9 @@
 require("es5-shim")
 require("babel/register")
 
-var Promise = require('es6-promise').Promise
-var $ = require('jquery')
-var backbone = require('backbone')
+var Promise = require('es6-promise').Promise,
+    $ = require('jquery'),
+    backbone = require('backbone')
 
 function qs(selector) {
     return document.querySelector(selector)
@@ -59,13 +59,13 @@ var fetchWeatherData_callback = (ll) => {
             humidity_current = current_data.humidity * 100,
             wind_current = current_data.windSpeed
 
-        qs(".current").innerHTML = `<span>Today in ${ll.formatted_address}: --> ${summary_current}</span>
-                                    <span>Now --> ${Math.round(temp_current)}\xB0</span>
-                                    <span>Feels Like --> ${Math.round(appTemp_current)}\xB0</span>
-                                    <span>Chance of rain --> ${Math.round(precProb_current)}%</span>
-                                    <span>Wind --> ${wind_current} mph</span>
-                                    <span>Visibility --> ${visibility} mi</span>
-                                    <span>Humidity --> ${humidity_current}%</span>`
+        qs(".current").innerHTML = `<div><span><strong>Today</strong> in <em>${ll.formatted_address}</em></span></div>
+                                    <div><span>Now</span> <span>${Math.round(temp_current)}\xB0</span></div>
+                                    <div><span>Feels Like</span> <span>${Math.round(appTemp_current)}\xB0</span></div>
+                                    <div><span>Chance of rain</span> <span>${Math.round(precProb_current)}%</span></div>
+                                    <div><span>Wind</span> <span>${wind_current} mph</span></div>
+                                    <div><span>Visibility</span> <span>${visibility} mi</span></div>
+                                    <div><span>Humidity</span> <span>${Math.round(humidity_current)}%</span></div>`
 
 
         var weather_icon_src_generator = function(dayX_data) {
