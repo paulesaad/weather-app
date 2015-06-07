@@ -22,7 +22,7 @@ var GPS = new Promise((res, rej) => {
         (gpsData) => res({
             lat: gpsData.coords.latitude,
             lon: gpsData.coords.longitude,
-            address: `your location`
+            formatted_address: `your area`
         }), (error) => rej(error.message)
     )
 })
