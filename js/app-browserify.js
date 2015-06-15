@@ -69,6 +69,7 @@ var fetchWeatherData_callback = (ll) => {
 
 
         var weather_icon_src_generator = function(dayX_data) {
+            alert()
             if (dayX_data.cloudCover < .3) {
                 return `./images/sunny.svg`
             } else if (dayX_data.cloudCover > .3 && dayX_data.cloudCover < .5) {
@@ -96,7 +97,7 @@ var fetchWeatherData_callback = (ll) => {
             qs("#overview").innerHTML = summary
         }
 
-        console.log('iTS HAPPENING')
+        // console.log('iTS HAPPENING')
 
         displayDayX(0)
 
