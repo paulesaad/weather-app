@@ -96,6 +96,8 @@ var fetchWeatherData_callback = (ll) => {
             qs("#overview").innerHTML = summary
         }
 
+        console.log('iTS HAPPENING')
+
         displayDayX(0)
 
         //Weekly Forecast data
