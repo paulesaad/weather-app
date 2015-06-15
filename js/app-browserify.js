@@ -70,13 +70,13 @@ var fetchWeatherData_callback = (ll) => {
 
         var weather_icon_src_generator = function(dayX_data) {
             if (dayX_data.cloudCover < .3) {
-                return `../images/sunny.svg`
+                return `./images/sunny.svg`
             } else if (dayX_data.cloudCover > .3 && dayX_data.cloudCover < .5) {
-                return `../images/partlysunny.svg`
+                return `./images/partlysunny.svg`
             } else if (dayX_data.cloudCover > 0.5 && dayX_data.precipProbability < 0.5) {
-                return `../images/cloudy.svg`
+                return `./images/cloudy.svg`
             } else {
-                return `../images/rainy.svg`
+                return `./images/rainy.svg`
             }
         }
 
